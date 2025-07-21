@@ -21,7 +21,7 @@ jobs:
       - name: Set up Zig
         uses: mlugg/setup-zig@v1
         with:
-          version: master
+          version: 0.14.0
       - name: Test
         run: zig build test
       - name: Build website
