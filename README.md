@@ -9,12 +9,12 @@ This tool supports only the printable class of ASCII characters.
 
 ## Demo
 
-View a demo at [the GitHub page](https://snootiermoon.github.io/re-fsm-tool).
+View a demo at [the GitHub page](https://aktriv.github.io/re-fsm-tool).
 
 ## Build & Run Locally
 
 ```sh
-git clone https://github.com/SnootierMoon/re-fsm-tool.git
+git clone https://github.com/aktriv/re-fsm-tool.git
 cd re-fsm-tool
 zig build run-server -Dopen
 ```
