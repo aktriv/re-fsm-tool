@@ -11,7 +11,17 @@ This tool supports only the printable class of ASCII characters.
 
 View a demo at [the GitHub page](https://aktriv.github.io/re-fsm-tool).
 
-## Build & Run Locally
+## Regex flavors
+
+ - POSIX.2 Basic/Extended
+   - Intended to be compliant with the specification. Rejects expressions that
+     are deemed implementation-defined by the specificiation.
+ - University of Maryland CSMC330 syntax
+   - Supports "|" for alternatation, "*" for repetition, and "("/")" for
+     grouping, and only alphabetic characters
+   - There is no way to encode a regex for the empty string.
+
+## Build & run locally
 
 ```sh
 git clone https://github.com/aktriv/re-fsm-tool.git
@@ -27,7 +37,7 @@ http.server` in the installation directory. Therefore, Python3 is a dependency
 for running this project. You can run `zig build install` to generate the
 webpage files without running the server.
 
-## On FSMs, DFAs, and Regular Expressions
+## On regular expressions, FSMs, and DFAs
 
 *Regular expressions (regexes? regices??)* are said to be discovered in 1951 by
 mathematician Stephen Cole Kleene. The kind of regular expressions we see today
@@ -73,14 +83,54 @@ support the full set of ASCII characters, NUL (0x00) to DEL (0x7F).
 
 Implemented Re -> AST -> NFA -> DFA -> minimized DFA.
 
-TODO: implement lookarounds, canonicalize DFA state numbers.
+DFA minimization is implemented by reversing the FSM twice.
 
-### Flavors
+### Code organization
 
-Currently supports a weird mixed version of different flavors. Eventually, to
-support:
+Written for Zig 0.14.0
 
- - Posix Basic/Extended
+ - `src/lib`: the backend/library
+   - `src/lib/Ast.zig`: a common abstract syntax tree for the language of
+     regular expressions
+   - `src/lib/Ast/parsers.zig`: parsers for the supported flavors
+   - `src/lib/Nfa.zig`: deterministic finite-automaton, represented logically
+     as a set of edges and a set of states. has an additional concept of a
+     "gate edge", which is an edge conditioned on the acceptance of a sister
+     FSM, to make lookaheads/lookbehinds/conjunction easier to implement
+   - `src/lib/Dfa.zig`: deterministic finite-automaton, represented logically
+     as a map (state, symbol) -> state
+   - `src/lib/root.zig`: minimization is implemented here
+ - `src/bin`: local binaries
+   - `src/bin/server.zig`: run a webserver for the static site locally
+   - `src/bin/cli.zig`: command line interface for testing the library
+ - `src/web`: files for creating the static site that serves a WASM binary
+   - `src/web/app.js`: code to load the WASM binary
+   - `src/web/{index.html,styles.css`: code for the static site
+   - `src/web/re-fsm.zig`: code for the WASM binary
+   - `src/web/favicon.ico`: for browser icon
+
+### TODO
+
+Update to Zig master
+
+Construct a reversed DFA initially, and then reverse once to minimize.
+
+Canonicalize DFA state numbers (if not done already).
+
+Add support for a regex programming language. An "expression" evaluates to
+a regex, and can be one of the following forms:
+ - if exprA then exprB else exprC
+ - \<exprA\> or \<exprB\>
+ - \<exprA\> and \<exprB\>
+ - not \<exprA\>
+ - reverse(\<exprA\>)
+ - concat(\<exprA\>, \<exprB\>)
+ - posix_bre(\<regex\>)
+ - posix_ere(\<regex\>)
+ - cmsc330(\<regex\>)
+
+Eventually, to support the following flavors:
+
  - Vim (extension of Posix Basic)
  - PCRE/PCRE2
  - Python, Java, Golang, Rust, C\#
