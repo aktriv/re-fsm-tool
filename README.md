@@ -119,7 +119,8 @@ Canonicalize DFA state numbers (if not done already).
 
 Add support for a regex programming language. An "expression" evaluates to
 a regex, and can be one of the following forms:
- - if exprA then exprB else exprC
+ - let \<var\> = \<exprA\> in \<exprB\>
+ - if \<exprA\> then \<exprB\> else \<exprC\>
  - \<exprA\> or \<exprB\>
  - \<exprA\> and \<exprB\>
  - not \<exprA\>
