@@ -32,10 +32,8 @@ zig build run-server -Dopen
 The [Zig](https://ziglang.org/download/) compiler is a dependency for building
 this project.
 
-The build script will start a Python HTTP server by invoking `python3 -m
-http.server` in the installation directory. Therefore, Python3 is a dependency
-for running this project. You can run `zig build install` to generate the
-webpage files without running the server.
+Running `zig build run-server -Dopen` will spawn the webserver locally and
+open it in a browser.
 
 ## On regular expressions, FSMs, and DFAs
 
